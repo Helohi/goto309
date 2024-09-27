@@ -1,0 +1,3 @@
+pytelegrambotapi
+aiohttp
+firebase-admin
