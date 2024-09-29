@@ -38,7 +38,7 @@ def sending_id(message: types.Message):
                      commands=['help', 'start'])
 def send_please_cancel(message: types.Message):
     bot.reply_to(message, "Please first /cancel current order!\n\nПожалуйста, сначала /cancel (отмените) "
-                                "текущую операцию")
+                          "текущую операцию")
 
 
 @bot.message_handler(commands=['help', 'start'])
@@ -55,7 +55,7 @@ def start_registration(message: types.Message):
         database.set_user_state(str(message.from_user.id), States.waiting_name, True, message.from_user.username)
     else:
         bot.reply_to(message, "Please first /cancel current order!\n\nПожалуйста, сначала /cancel (отмените) "
-                                    "текущую операцию")
+                              "текущую операцию")
 
 
 @bot.message_handler(func=lambda message: database.get_user_state(message.from_user.id) == States.waiting_name)
@@ -73,8 +73,8 @@ def getting_phone_number(message: types.Message):
         for admin in admins + [main_admin]:
             bot.send_message(admin, f"{message.from_user.id} or @{message.from_user.username}: {message.text}")
         bot.send_message(message.chat.id,
-                               "Получил! Осталось только отправить 500р на номер +79770338324 или на карту ",
-                               reply_markup=keyboards.PAYMENT_SENT)
+                         "Получил! Осталось только отправить 500р на номер +79770338324 или на карту ",
+                         reply_markup=keyboards.PAYMENT_SENT)
         database.set_user_state(str(message.from_user.id), States.waiting_payment)
         database.update_user(message.from_user.id, phone_number=message.text)
     else:
@@ -84,12 +84,12 @@ def getting_phone_number(message: types.Message):
 @bot.callback_query_handler(func=lambda callback: callback.data == "payment_sent")
 def registering_order(callback: types.CallbackQuery):
     bot.send_message(callback.message.chat.id, "На этом все. Мы проверим вашу оплату и завтра утром отправим "
-                                                     "ваш номер в очереди (+ фото листка)")
+                                               "ваш номер в очереди (+ фото листка)")
     for admin in admins:
         bot.send_message(admin, f"{callback.from_user.id} or @{callback.from_user.username}: Отправил оплату")
     bot.send_message(main_admin, f"{callback.from_user.id} or @{callback.from_user.username}: "
-                                       f"Отправил оплату", reply_markup=keyboards.
-                           generate_inline_for_accepted_payments(str(callback.from_user.id)))
+                                 f"Отправил оплату", reply_markup=keyboards.
+                     generate_inline_for_accepted_payments(str(callback.from_user.id)))
     database.set_user_state(callback.from_user.id, States.no_state)
     bot.delete_message(callback.message.chat.id, callback.message.message_id)
 
@@ -118,7 +118,7 @@ def send_customer_payment_approval(callback: types.CallbackQuery):
 def send_media_to_customer(message: types.Message):
     customer_id = message.caption.split()[1]
     bot.send_photo(customer_id, message.photo[0].file_id, f"\n\nЕсли есть вопросы вы можете написать: "
-                                                                f"@{message.from_user.username}")
+                                                          f"@{message.from_user.username}")
     bot.reply_to(message, "sent|отправлено")
 
 
@@ -127,10 +127,10 @@ def send_reply_to_customer(message: types.Message):
     lst_of_args = message.text.split()
     if len(lst_of_args) < 2:
         return bot.reply_to(message, "Что бы использовать /send вам нужно написать </send *user_id* *message*>.\n"
-                                           "Например: /send 123123123 Ваш номер в очереди 1")
+                                     "Например: /send 123123123 Ваш номер в очереди 1")
     text_to_send = " ".join(lst_of_args[2:])
     bot.send_message(lst_of_args[1], text_to_send + f"\n\nЕсли есть вопросы вы можете написать: "
-                                                          f"@{message.from_user.username}")
+                                                    f"@{message.from_user.username}")
     bot.reply_to(message, "sent|отправлено")
 
 
