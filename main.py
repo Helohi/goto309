@@ -73,7 +73,7 @@ def getting_phone_number(message: types.Message):
         for admin in admins + [main_admin]:
             bot.send_message(admin, f"{message.from_user.id} or @{message.from_user.username}: {message.text}")
         bot.send_message(message.chat.id,
-                         "Получил! Осталось только отправить 500р на номер +79770338324 или на карту ",
+                         "Получил! Осталось только отправить 500р на номер +79770338324 или на карту 2202208337539663",
                          reply_markup=keyboards.PAYMENT_SENT)
         database.set_user_state(str(message.from_user.id), States.waiting_payment)
         database.update_user(message.from_user.id, phone_number=message.text)
