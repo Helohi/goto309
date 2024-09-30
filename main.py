@@ -142,7 +142,7 @@ def show_error_message(message: types.Message):
 def main():
     print("[SETTING UP]")
     print("[START]")
-    asyncio.run(bot.polling())
+    bot.polling()
     print("[FINISH]")
 
 
