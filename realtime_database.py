@@ -110,7 +110,11 @@ class RealtimeDatabase:
             -> Union[str, States]:
         telegram_id = str(telegram_id)
         self.check_users_presence_in_database(telegram_id, auto_add_to_database, telegram_nick)
-        return States(db.reference(f"/{telegram_id}/state").get())
+        state_ = db.reference(f"/{telegram_id}/state").get()
+        if state_ is None:
+            state_ = States.no_state
+            self.set_user_state(telegram_id, States.no_state, True, telegram_nick)
+        return States(state_)
 
     @map_error_with_message
     def set_user_state(self, telegram_id: Union[str, int], state: States, auto_add_to_database: bool = False,

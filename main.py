@@ -8,7 +8,6 @@ from security.config import TELEGRAM_BOT_API
 
 import keyboards
 import text
-import asyncio
 
 from states import States
 
