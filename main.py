@@ -1,4 +1,6 @@
 import json
+import time
+from typing import Union
 
 from telebot import TeleBot
 from telebot import types
@@ -15,6 +17,7 @@ bot = TeleBot(TELEGRAM_BOT_API)
 main_admin = 5701980281  # who gets the money
 admins = [1301200391]
 database = RealtimeDatabase()
+saved_exception: Union[BaseException, None] = None
 
 
 @bot.message_handler(commands=['cancel'])
@@ -138,12 +141,34 @@ def show_error_message(message: types.Message):
     bot.send_message(message.chat.id, text.MISUNDERSTANDING, reply_markup=keyboards.MENU)
 
 
+def send_error_to_main_admin(error: BaseException):
+    bot.send_message(main_admin, f"[AUTOMATIC BOT SENDER] Type {type(error)}: {error}")
+
+
 def main():
+
+    global saved_exception
+
     print("[SETTING UP]")
+    print("[SENDING ERROR FROM LAST EXECUTION]")
+    if saved_exception is not None:
+        send_error_to_main_admin(saved_exception)
+        saved_exception = None
     print("[START]")
     bot.polling()
     print("[FINISH]")
 
 
 if __name__ == '__main__':
-    main()
+    while True:
+        try:
+            main()
+        except KeyboardInterrupt:
+            print("[KEYBOARD INTERRUPT]")
+            break
+        except BaseException as e:
+            print(f"[BASE EXCEPTION ERROR CATCHER GOT ERROR]{type(e)}: {e}")
+            saved_exception = e
+        else:
+            break
+        time.sleep(15)
