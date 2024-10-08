@@ -7,4 +7,5 @@ class States(Enum):
     waiting_phone_number = "waiting_phone_number"
     waiting_payment = "waiting_payment"
     on_moderation = "on_moderation"
+    waiting_feedback = "waiting_feedback"
 

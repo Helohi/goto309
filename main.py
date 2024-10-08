@@ -50,6 +50,27 @@ def send_welcome(message: types.Message):
     bot.send_message(message.chat.id, text.INTRO, reply_markup=keyboards.MENU)
 
 
+# GETTING FEEDBACK
+@bot.message_handler(func=lambda message: message.text.lower() == "оставить отзыв")
+def start_registration(message: types.Message):
+    if database.get_user_state(message.from_user.id) == States.no_state:
+        bot.send_message(message.chat.id, "Пожалуйста отправьте ваш отзыв:")
+        database.set_user_state(str(message.from_user.id), States.waiting_feedback, True, message.from_user.username)
+    else:
+        bot.reply_to(message, "Please first /cancel current order!\n\nПожалуйста, сначала /cancel (отмените) "
+                              "текущую операцию")
+
+
+@bot.message_handler(func=lambda message: database.get_user_state(message.from_user.id) == States.waiting_feedback)
+def getting_feedback(message: types.Message):
+    for admin in admins + [main_admin]:
+        bot.send_message(admin, f"Новый отзыв от пользователя {message.from_user.id} или @{message.from_user.username}"
+                                f":\n{message.text}")
+    bot.reply_to(message, "Спасибо за отзыв!")
+    database.set_user_state(message.from_user.id, States.no_state, True, message.from_user.username)
+
+
+# GETTING ORDER FOR TOMORROW
 @bot.message_handler(func=lambda message: message.text.lower() == "встать в очередь на завтра")
 def start_registration(message: types.Message):
     if database.get_user_state(message.from_user.id) == States.no_state:
@@ -146,7 +167,6 @@ def send_error_to_main_admin(error: BaseException):
 
 
 def main():
-
     global saved_exception
 
     print("[SETTING UP]")
